@@ -18,6 +18,8 @@
 
 @protocol JLPageViewControllerDelegate <NSObject>
 
+@optional
+
 - (void)pageViewController:(JLPageViewController*)viewController didScrollToCurrentPosition:(CGFloat)currentPosition;
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex;
 

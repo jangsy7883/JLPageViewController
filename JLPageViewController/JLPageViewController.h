@@ -35,4 +35,6 @@
 @property (nonatomic, weak) id<JLPageViewControllerDataSource> dataSource;
 @property (nonatomic, weak) id<JLPageViewControllerDelegate> delegate;
 
+- (void)setCurrentIndex:(NSUInteger)currentIndex animated:(BOOL)animated;
+
 @end

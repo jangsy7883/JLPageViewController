@@ -13,7 +13,7 @@
 @protocol JLPageViewControllerDelegate <NSObject>
 
 @optional
-- (void)pageViewController:(JLPageViewController*)viewController didScrollToCurrentPosition:(CGFloat)currentPosition;
+- (void)pageViewController:(JLPageViewController *)pageViewController didScrollToCurrentPosition:(CGFloat)currentPosition;
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex;
 
 @end
@@ -33,10 +33,13 @@
 @property (nonatomic, readonly) UIScrollView *scrollView;
 
 @property (nonatomic, assign) NSUInteger currentIndex;
+@property (nonatomic, readonly) UIViewController* currentViewController;
+
 @property (nonatomic, weak) id<JLPageViewControllerDataSource> dataSource;
 @property (nonatomic, weak) id<JLPageViewControllerDelegate> delegate;
 
 - (void)setCurrentIndex:(NSUInteger)currentIndex animated:(BOOL)animated;
+- (void)reloadData;
 
 @end
 

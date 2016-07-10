@@ -48,13 +48,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 - (void)dealloc
 {
-    @try
-    {
-        [self.scrollView removeObserver:self
-                             forKeyPath:NSStringFromSelector(@selector(contentOffset))
-                                context:nil];
-    }
-    @catch (NSException *exception) {};
+    [self removeObservers];
 }
 
 - (void)baseInit
@@ -113,16 +107,10 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     
     self.scrollView.scrollsToTop = NO;
     
-    @try
-    {
-        [self.scrollView addObserver:self
-                          forKeyPath:NSStringFromSelector(@selector(contentOffset))
-                             options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew
-                             context:nil];
-    }
-    @catch (NSException *exception) {};
-
-    [self relaodData];
+    
+    [self addObservers];
+    
+    [self reloadData];
 }
 
 - (void)viewWillLayoutSubviews
@@ -134,7 +122,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 #pragma mark - RELOAD
 
-- (void)relaodData
+- (void)reloadData
 {
     NSInteger index = _currentIndex;
     
@@ -142,12 +130,35 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     {
         index = [self.dataSource defaultPageIndexForPageViewController:self];
     }
-
+    
     _currentIndex = NSNotFound;
     self.currentIndex = index;
 }
 
 #pragma mark - observe
+
+- (void)addObservers
+{
+    @try
+    {
+        [self.scrollView addObserver:self
+                          forKeyPath:NSStringFromSelector(@selector(contentOffset))
+                             options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew
+                             context:nil];
+    }
+    @catch (NSException *exception) {};
+}
+
+- (void)removeObservers
+{
+    @try
+    {
+        [self.scrollView removeObserver:self
+                             forKeyPath:NSStringFromSelector(@selector(contentOffset))
+                                context:nil];
+    }
+    @catch (NSException *exception) {};
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -173,11 +184,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     
     if (index >= 0)
     {
-        if ([self.dataSource respondsToSelector:@selector(pageViewController:viewControllerForIndex:)])
-        {
-            afterViewController = [self.dataSource pageViewController:self viewControllerForIndex:index];
-            afterViewController.pageIndex = index;
-        }
+        afterViewController = [self viewControllerForIndex:index];
     }
     
     return afterViewController;
@@ -190,11 +197,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     
     if (index >= 0)
     {
-        if ([self.dataSource respondsToSelector:@selector(pageViewController:viewControllerForIndex:)])
-        {
-            beforeViewController = [self.dataSource pageViewController:self viewControllerForIndex:index];
-            beforeViewController.pageIndex = index;
-        }
+        beforeViewController = [self viewControllerForIndex:index];
     }
     
     return beforeViewController;
@@ -219,22 +222,47 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     if (completed)
     {
         NSUInteger fromIndex = _currentIndex;
-     
+        
         _currentIndex = [self indexForViewController:pageViewController.viewControllers.firstObject];
         
-        if (_currentIndex != NSNotFound)
+        for (UIViewController *viewController in pageViewController.childViewControllers)
         {
-            if ([self.delegate respondsToSelector:@selector(pageViewController:didChangeToCurrentIndex:fromIndex:)])
+            UIScrollView *scrollView = [self scrollViewForContainingViewController:viewController];
+            
+            if (scrollView)
             {
-                [self.delegate pageViewController:self didChangeToCurrentIndex:self.currentIndex fromIndex:fromIndex];
+                scrollView.scrollsToTop = (_currentIndex == viewController.pageIndex);
             }
+        }
+        
+        if (_currentIndex != NSNotFound
+            && [self.delegate respondsToSelector:@selector(pageViewController:didChangeToCurrentIndex:fromIndex:)])
+        {
+            [self.delegate pageViewController:self didChangeToCurrentIndex:self.currentIndex fromIndex:fromIndex];
         }
     }
     
     _transitionInProgress = NO;
 }
 
-#pragma mark - scrollview delegate
+#pragma mark - scrollview
+
+- (UIScrollView*)scrollViewForContainingViewController:(UIViewController*)viewController
+{
+    if ([viewController.view isKindOfClass:[UIScrollView class]])
+    {
+        return (UIScrollView*)viewController.view;
+    }
+    
+    for (UIScrollView* scrollView in viewController.view.subviews)
+    {
+        if ([scrollView isKindOfClass:[UIScrollView class]])
+        {
+            return scrollView;
+        }
+    }
+    return nil;
+}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -270,7 +298,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 {
     return viewController.pageIndex;
 }
-//
+
 - (UIViewController*)viewControllerForIndex:(NSInteger)index
 {
     UIViewController *viewController = nil;
@@ -304,7 +332,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
         {
             UIViewController *viewController = [self viewControllerForIndex:currentIndex];
             
-            if (viewController && [self.pageViewController.viewControllers.firstObject isEqual:viewController] == NO)
+            if (viewController)// && [self.pageViewController.viewControllers.firstObject isEqual:viewController] == NO)
             {
                 _nextIndex = currentIndex;
                 
@@ -338,6 +366,18 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 }
 
 #pragma mark - GETTERS
+
+- (UIViewController*)currentViewController
+{
+    for (UIViewController*viewController in self.pageViewController.childViewControllers)
+    {
+        if (viewController.pageIndex == _currentIndex)
+        {
+            return viewController;
+        }
+    }
+    return nil;
+}
 
 - (UIScrollView *)scrollView
 {

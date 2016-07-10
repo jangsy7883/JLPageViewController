@@ -13,7 +13,6 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 @implementation UIViewController (JLPageViewController)
 
-
 - (NSUInteger)pageIndex
 {
     id obj = objc_getAssociatedObject(self, PageIndexPropertyKey);
@@ -37,7 +36,6 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 @interface JLPageViewController ()<UIPageViewControllerDataSource,UIPageViewControllerDelegate,UIScrollViewDelegate>
 
 @property (nonatomic, strong) UIPageViewController *pageViewController;
-@property (nonatomic, weak) UIScrollView *scrollView;
 
 @property (nonatomic, assign) BOOL transitionInProgress;
 @property (nonatomic, assign) NSUInteger nextIndex;
@@ -47,6 +45,17 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 @implementation JLPageViewController
 
 #pragma mark - init
+
+- (void)dealloc
+{
+    @try
+    {
+        [self.scrollView removeObserver:self
+                             forKeyPath:NSStringFromSelector(@selector(contentOffset))
+                                context:nil];
+    }
+    @catch (NSException *exception) {};
+}
 
 - (void)baseInit
 {
@@ -103,14 +112,17 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     [self.pageViewController didMoveToParentViewController:self];
     
     self.scrollView.scrollsToTop = NO;
-    self.scrollView.delegate = self;
     
-    if (self.currentIndex != NSNotFound)
+    @try
     {
-        NSInteger index = _currentIndex;
-        _currentIndex = NSNotFound;
-        self.currentIndex = index;
+        [self.scrollView addObserver:self
+                          forKeyPath:NSStringFromSelector(@selector(contentOffset))
+                             options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew
+                             context:nil];
     }
+    @catch (NSException *exception) {};
+
+    [self relaodData];
 }
 
 - (void)viewWillLayoutSubviews
@@ -118,6 +130,38 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     [super viewWillLayoutSubviews];
     
     self.pageViewController.view.frame = self.view.bounds;
+}
+
+#pragma mark - RELOAD
+
+- (void)relaodData
+{
+    NSInteger index = _currentIndex;
+    
+    if (_currentIndex == NSNotFound && [self.dataSource respondsToSelector:@selector(defaultPageIndexForPageViewController:)])
+    {
+        index = [self.dataSource defaultPageIndexForPageViewController:self];
+    }
+
+    _currentIndex = NSNotFound;
+    self.currentIndex = index;
+}
+
+#pragma mark - observe
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([object isKindOfClass:[UIScrollView class]]
+        && [keyPath isEqualToString:NSStringFromSelector(@selector(contentOffset))])
+    {
+        CGPoint new = [change[NSKeyValueChangeNewKey] CGPointValue];
+        CGPoint old = [change[NSKeyValueChangeOldKey] CGPointValue];
+        
+        if (CGPointEqualToPoint(new, old) == NO)
+        {
+            [self scrollViewDidScroll:object];
+        }
+    }
 }
 
 #pragma mark - pageviewcontrolelr data source
@@ -297,17 +341,13 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 - (UIScrollView *)scrollView
 {
-    if (!_scrollView)
+    for (UIView *subview in self.pageViewController.view.subviews)
     {
-        for (UIView *subview in self.pageViewController.view.subviews)
-        {
-            if ([subview isKindOfClass:[UIScrollView class]]) {
-                _scrollView = (UIScrollView *)subview;
-                break;
-            }
+        if ([subview isKindOfClass:[UIScrollView class]]) {
+            return (UIScrollView *)subview;
         }
     }
-    return _scrollView;
+    return nil;
 }
 
 @end

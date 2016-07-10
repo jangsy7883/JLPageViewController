@@ -38,6 +38,11 @@
     return [self contentViewControllerForIndex:index];
 }
 
+- (NSInteger)defaultPageIndexForPageViewController:(JLPageViewController *)pageViewController
+{
+    return 10;
+}
+
 #pragma mark - JLPageViewControllerDelegate
 
 - (void)pageViewController:(JLPageViewController*)viewController didScrollToCurrentPosition:(CGFloat)currentPosition
@@ -58,8 +63,6 @@
         self.pageViewController = segue.destinationViewController;
         self.pageViewController.delegate = self;
         self.pageViewController.dataSource = self;
-        
-        self.pageViewController.currentIndex = 0;
     }
 }
 

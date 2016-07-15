@@ -1,4 +1,7 @@
 # JLPageViewController
+[![Version](https://img.shields.io/cocoapods/v/JLPageViewController.svg?style=flat)](http://cocoadocs.org/docsets/JLPageViewController)
+[![License](https://img.shields.io/cocoapods/l/JLPageViewController.svg?style=flat)](http://cocoadocs.org/docsets/JLPageViewController)
+[![Platform](https://img.shields.io/cocoapods/p/JLPageViewController.svg?style=flat)](http://cocoadocs.org/docsets/JLPageViewController)
 
 #Installation
 JLPageViewController is available on CocoaPods. Add to your Podfile:

@@ -44,12 +44,14 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 @implementation JLPageViewController
 
-#pragma mark - init
+#pragma mark - dealloc
 
 - (void)dealloc
 {
     [self removeObservers];
 }
+
+#pragma mark - init
 
 - (void)baseInit
 {
@@ -94,23 +96,24 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 {
     [super viewDidLoad];
     
+    //PAGE VIEW CONTROLLER
     self.pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
                                                               navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
                                                                             options:nil];
-    
     self.pageViewController.dataSource = self;
     self.pageViewController.delegate = self;
-    
     [self addChildViewController:self.pageViewController];
     [self.view addSubview:self.pageViewController.view];
     [self.pageViewController didMoveToParentViewController:self];
     
+    //SCROLL VIEW
     self.scrollView.scrollsToTop = NO;
-    
-    
     [self addObservers];
     
+    /*
+    //RELOAD DATA
     [self reloadData];
+     */
 }
 
 - (void)viewWillLayoutSubviews
@@ -124,18 +127,25 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 - (void)reloadData
 {
-    NSInteger index = _currentIndex;
+    NSUInteger index = _currentIndex;
     
-    if (_currentIndex == NSNotFound && [self.dataSource respondsToSelector:@selector(defaultPageIndexForPageViewController:)])
+    if (_currentIndex == NSNotFound)
     {
-        index = [self.dataSource defaultPageIndexForPageViewController:self];
+        if ([self.dataSource respondsToSelector:@selector(defaultPageIndexForPageViewController:)])
+        {
+            index = [self.dataSource defaultPageIndexForPageViewController:self];
+        }
+        else
+        {
+            index = 0;
+        }
     }
     
     _currentIndex = NSNotFound;
     self.currentIndex = index;
 }
 
-#pragma mark - observe
+#pragma mark - observer
 
 - (void)addObservers
 {
@@ -175,7 +185,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     }
 }
 
-#pragma mark - pageviewcontrolelr data source
+#pragma mark - PageViewController DataSource
 
 - (UIViewController*)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
@@ -203,7 +213,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     return beforeViewController;
 }
 
-#pragma  mark - pageviewcontroller delegate
+#pragma  mark - PageViewController Delegate
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
 {
@@ -245,7 +255,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     _transitionInProgress = NO;
 }
 
-#pragma mark - scrollview
+#pragma mark - ScrollView
 
 - (UIScrollView*)scrollViewForContainingViewController:(UIViewController*)viewController
 {
@@ -292,7 +302,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     }
 }
 
-#pragma mark - view controller
+#pragma mark - VIEWCONTROLLER
 
 - (NSInteger)indexForViewController:(UIViewController*)viewController
 {

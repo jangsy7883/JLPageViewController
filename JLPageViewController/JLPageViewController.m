@@ -110,10 +110,8 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     self.scrollView.scrollsToTop = NO;
     [self addObservers];
     
-    /*
     //RELOAD DATA
     [self reloadData];
-     */
 }
 
 - (void)viewWillLayoutSubviews

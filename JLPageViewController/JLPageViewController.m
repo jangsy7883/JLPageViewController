@@ -33,9 +33,45 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 @end
 
+
+@interface JLCustomPageViewController : UIPageViewController
+
+@end
+
+@implementation JLCustomPageViewController
+
+- (void)setViewControllers:(NSArray*)viewControllers direction:(UIPageViewControllerNavigationDirection)direction animated:(BOOL)animated completion:(void (^)(BOOL))completion
+{
+    if (animated)
+    {
+        [super setViewControllers:viewControllers direction:direction animated:YES completion:^(BOOL finished)
+        {
+            if (finished)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [super setViewControllers:viewControllers direction:direction animated:NO completion:completion];
+                });
+            }
+            else
+            {
+                if (completion != NULL)
+                {
+                    completion(finished);
+                }
+            }
+        }];
+    }
+    else
+    {
+        [super setViewControllers:viewControllers direction:direction animated:NO completion:completion];
+    }
+}
+
+@end
+
 @interface JLPageViewController ()<UIPageViewControllerDataSource,UIPageViewControllerDelegate,UIScrollViewDelegate>
 
-@property (nonatomic, strong) UIPageViewController *pageViewController;
+@property (nonatomic, strong) JLCustomPageViewController *pageViewController;
 
 @property (nonatomic, assign) BOOL transitionInProgress;
 @property (nonatomic, assign) NSUInteger nextIndex;
@@ -97,9 +133,9 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     [super viewDidLoad];
     
     //PAGE VIEW CONTROLLER
-    self.pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
-                                                              navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
-                                                                            options:nil];
+    self.pageViewController = [[JLCustomPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
+                                                                    navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
+                                                                                  options:nil];
     self.pageViewController.dataSource = self;
     self.pageViewController.delegate = self;
     [self addChildViewController:self.pageViewController];
@@ -229,27 +265,35 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 {
     if (completed)
     {
-        NSUInteger fromIndex = _currentIndex;
+        [self didFinishTransition];
+    }
+    
+    _transitionInProgress = NO;
+    
+}
+
+-(void)didFinishTransition
+{
+    NSUInteger fromIndex = _currentIndex;
+    
+    _currentIndex = [self indexForViewController:self.pageViewController.viewControllers.firstObject];
+    
+    for (UIViewController *viewController in self.pageViewController.childViewControllers)
+    {
+        UIScrollView *scrollView = [self scrollViewForContainingViewController:viewController];
         
-        _currentIndex = [self indexForViewController:pageViewController.viewControllers.firstObject];
-        
-        for (UIViewController *viewController in pageViewController.childViewControllers)
+        if (scrollView)
         {
-            UIScrollView *scrollView = [self scrollViewForContainingViewController:viewController];
-            
-            if (scrollView)
-            {
-                scrollView.scrollsToTop = (_currentIndex == viewController.pageIndex);
-            }
-        }
-        
-        if (_currentIndex != NSNotFound
-            && [self.delegate respondsToSelector:@selector(pageViewController:didChangeToCurrentIndex:fromIndex:)])
-        {
-            [self.delegate pageViewController:self didChangeToCurrentIndex:self.currentIndex fromIndex:fromIndex];
+            scrollView.scrollsToTop = (_currentIndex == viewController.pageIndex);
         }
     }
     
+    if (_currentIndex != NSNotFound
+        && [self.delegate respondsToSelector:@selector(pageViewController:didChangeToCurrentIndex:fromIndex:)])
+    {
+        [self.delegate pageViewController:self didChangeToCurrentIndex:self.currentIndex fromIndex:fromIndex];
+    }
+
     _transitionInProgress = NO;
 }
 
@@ -345,9 +389,19 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
                 _nextIndex = currentIndex;
                 
                 __weak JLPageViewController *blocksafeSelf = self;
-                UIPageViewControllerNavigationDirection direction = currentIndex > self.currentIndex ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
-                NSArray *viewControllers = self.pageViewController.viewControllers;
+                UIPageViewControllerNavigationDirection direction = currentIndex > _currentIndex ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
                 
+                [self.pageViewController setViewControllers:@[viewController]
+                                                  direction:direction
+                                                   animated:animated
+                                                 completion:^(BOOL finished) {
+                                                     
+                                                     if (finished)
+                                                     {
+                                                         [blocksafeSelf didFinishTransition];
+                                                     }
+                                                 }];
+                /*
                 [self.pageViewController setViewControllers:@[viewController]
                                                   direction:direction
                                                    animated:animated
@@ -355,10 +409,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
                  {
                      if (finished)
                      {
-                         [blocksafeSelf pageViewController:blocksafeSelf.pageViewController
-                                        didFinishAnimating:animated
-                                   previousViewControllers:viewControllers
-                                       transitionCompleted:YES];
+                         [blocksafeSelf didFinishTransition];
                          
                          dispatch_async(dispatch_get_main_queue(), ^{
                              [blocksafeSelf.pageViewController setViewControllers:@[viewController]
@@ -368,6 +419,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
                          });
                      }
                  }];
+                 */
             }
         }
     }
@@ -391,7 +443,8 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 {
     for (UIView *subview in self.pageViewController.view.subviews)
     {
-        if ([subview isKindOfClass:[UIScrollView class]]) {
+        if ([subview isKindOfClass:[UIScrollView class]])
+        {
             return (UIScrollView *)subview;
         }
     }

@@ -13,7 +13,7 @@
 @interface ViewController ()<JLPageViewControllerDataSource,JLPageViewControllerDelegate>
 
 @property (nonatomic, weak) JLPageViewController * pageViewController;
-
+@property (nonatomic, assign) NSInteger index;
 @end
 
 @implementation ViewController
@@ -21,6 +21,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    _index = 0;
 }
 
 - (ContentViewController*)contentViewControllerForIndex:(NSInteger)index
@@ -52,7 +53,7 @@
 
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex
 {
-    NSLog(@"%lu -> %ld",(unsigned long)fromIndex,(long)index);
+//    NSLog(@"%lu -> %ld",(unsigned long)fromIndex,(long)index);
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -64,6 +65,13 @@
         self.pageViewController.delegate = self;
         self.pageViewController.dataSource = self;
     }
+}
+
+- (IBAction)preseedButton:(id)sender
+{
+    _index = !_index;
+    
+    [self.pageViewController setCurrentIndex:_index animated:NO];
 }
 
 @end

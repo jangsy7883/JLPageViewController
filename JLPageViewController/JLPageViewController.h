@@ -44,5 +44,5 @@
 @end
 
 @interface UIViewController (JLPageViewController)
-@property (nonatomic, readonly) NSUInteger pageIndex;
+@property (nonatomic, readonly) NSUInteger jl_pageIndex;
 @end

@@ -13,7 +13,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 @implementation UIViewController (JLPageViewController)
 
-- (NSUInteger)pageIndex
+- (NSUInteger)jl_pageIndex
 {
     id obj = objc_getAssociatedObject(self, PageIndexPropertyKey);
     
@@ -24,7 +24,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     return NSNotFound;
 }
 
-- (void)setPageIndex:(NSUInteger)pageIndex
+- (void)setJl_pageIndex:(NSUInteger)pageIndex
 {
     NSNumber *num = @(pageIndex);
     
@@ -223,7 +223,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 - (UIViewController*)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
-    NSInteger index = (viewController.pageIndex == NSNotFound) ? 0 : viewController.pageIndex+1;
+    NSInteger index = (viewController.jl_pageIndex == NSNotFound) ? 0 : viewController.jl_pageIndex+1;
     UIViewController *afterViewController = nil;
     
     if (index >= 0)
@@ -236,7 +236,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
-    NSInteger index = (viewController.pageIndex == NSNotFound) ? 0 : viewController.pageIndex-1;
+    NSInteger index = (viewController.jl_pageIndex == NSNotFound) ? 0 : viewController.jl_pageIndex-1;
     UIViewController *beforeViewController = nil;
     
     if (index >= 0)
@@ -255,7 +255,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     
     UIViewController *viewController = pendingViewControllers.firstObject;
     
-    _nextIndex = viewController.pageIndex;
+    _nextIndex = viewController.jl_pageIndex;
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController
@@ -276,6 +276,9 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 {
     NSUInteger fromIndex = _currentIndex;
     
+    NSLog(@"%@",self.pageViewController.viewControllers.firstObject);
+    NSLog(@"%zd",[self indexForViewController:self.pageViewController.viewControllers.firstObject]);
+    
     _currentIndex = [self indexForViewController:self.pageViewController.viewControllers.firstObject];
     
     for (UIViewController *viewController in self.pageViewController.childViewControllers)
@@ -284,7 +287,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
         
         if (scrollView)
         {
-            scrollView.scrollsToTop = (_currentIndex == viewController.pageIndex);
+            scrollView.scrollsToTop = (_currentIndex == viewController.jl_pageIndex);
         }
     }
     
@@ -348,7 +351,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 - (NSInteger)indexForViewController:(UIViewController*)viewController
 {
-    return viewController.pageIndex;
+    return viewController.jl_pageIndex;
 }
 
 - (UIViewController*)viewControllerForIndex:(NSInteger)index
@@ -360,7 +363,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
         viewController = [self.dataSource pageViewController:self viewControllerForIndex:index];
     }
     
-    viewController.pageIndex = index;
+    viewController.jl_pageIndex = index;
     
     return viewController;
 }
@@ -431,7 +434,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 {
     for (UIViewController*viewController in self.pageViewController.childViewControllers)
     {
-        if (viewController.pageIndex == _currentIndex)
+        if (viewController.jl_pageIndex == _currentIndex)
         {
             return viewController;
         }

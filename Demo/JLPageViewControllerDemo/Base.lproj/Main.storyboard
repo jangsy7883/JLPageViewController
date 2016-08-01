@@ -67,7 +67,18 @@
                             <constraint firstItem="0mn-j7-7Zd" firstAttribute="top" secondItem="WV0-i2-yog" secondAttribute="bottom" id="pUp-kH-p4f"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="bvr-Eg-Z6f"/>
+                    <navigationItem key="navigationItem" id="bvr-Eg-Z6f">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="xvK-iG-QB9">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wy4-OW-1a8">
+                                <rect key="frame" x="233" y="7" width="71" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="preseedButton:" destination="LGY-ew-Con" eventType="touchUpInside" id="aHK-JR-2L2"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Plz-ok-exV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

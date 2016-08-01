@@ -13,6 +13,7 @@
 @protocol JLPageViewControllerDelegate <NSObject>
 
 @optional
+
 - (void)pageViewController:(JLPageViewController *)pageViewController didScrollToCurrentPosition:(CGFloat)currentPosition;
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex;
 
@@ -41,8 +42,6 @@
 - (void)setCurrentIndex:(NSUInteger)currentIndex animated:(BOOL)animated;
 - (void)reloadData;
 
-@end
+- (NSUInteger)indexPathForPageContainingViewController:(UIViewController*)viewController;
 
-@interface UIViewController (JLPageViewController)
-@property (nonatomic, readonly) NSUInteger jl_pageIndex;
 @end

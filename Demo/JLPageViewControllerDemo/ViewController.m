@@ -48,12 +48,12 @@
 
 - (void)pageViewController:(JLPageViewController*)viewController didScrollToCurrentPosition:(CGFloat)currentPosition
 {
-    NSLog(@"_%f",currentPosition);
+//    NSLog(@"_%f",currentPosition);
 }
 
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex
 {
-//    NSLog(@"%lu -> %ld",(unsigned long)fromIndex,(long)index);
+    NSLog(@"%lu -> %ld(%zd)",(unsigned long)fromIndex,(long)index,[pageViewController indexPathForPageContainingViewController:pageViewController.currentViewController]);
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

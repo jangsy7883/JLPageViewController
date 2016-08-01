@@ -38,7 +38,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="C6K-UF-W76" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="301" y="1111"/>
+            <point key="canvasLocation" x="653" y="649"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="h8Z-ME-iYD">
@@ -68,7 +68,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="bvr-Eg-Z6f">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="xvK-iG-QB9">
+                        <barButtonItem key="rightBarButtonItem" style="done" id="xvK-iG-QB9">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wy4-OW-1a8">
                                 <rect key="frame" x="233" y="7" width="71" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -82,7 +82,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Plz-ok-exV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="241" y="489"/>
+            <point key="canvasLocation" x="268" y="649"/>
         </scene>
         <!--Content View Controller-->
         <scene sceneID="4ky-vr-p8p">
@@ -116,7 +116,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oey-aD-Ifm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="734" y="649"/>
+            <point key="canvasLocation" x="1031" y="649"/>
         </scene>
     </scenes>
 </document>

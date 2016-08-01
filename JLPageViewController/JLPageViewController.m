@@ -11,6 +11,12 @@
 
 static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
+@interface UIViewController (JLPageViewController)
+
+@property (nonatomic, readonly) NSUInteger jl_pageIndex;
+
+@end
+
 @implementation UIViewController (JLPageViewController)
 
 - (NSUInteger)jl_pageIndex
@@ -269,17 +275,13 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     }
     
     _transitionInProgress = NO;
-    
 }
 
--(void)didFinishTransition
+- (void)didFinishTransition
 {
     NSUInteger fromIndex = _currentIndex;
-    
-    NSLog(@"%@",self.pageViewController.viewControllers.firstObject);
-    NSLog(@"%zd",[self indexForViewController:self.pageViewController.viewControllers.firstObject]);
-    
-    _currentIndex = [self indexForViewController:self.pageViewController.viewControllers.firstObject];
+
+    _currentIndex = [self indexPathForPageContainingViewController:self.pageViewController.viewControllers.firstObject];
     
     for (UIViewController *viewController in self.pageViewController.childViewControllers)
     {
@@ -349,7 +351,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 #pragma mark - VIEWCONTROLLER
 
-- (NSInteger)indexForViewController:(UIViewController*)viewController
+- (NSUInteger)indexPathForPageContainingViewController:(UIViewController*)viewController
 {
     return viewController.jl_pageIndex;
 }

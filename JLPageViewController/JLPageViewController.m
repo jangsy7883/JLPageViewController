@@ -332,7 +332,11 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
         CGFloat position = 0;
         CGFloat percent = fabs(offsetX - width)/width;
         
-        if (index < nextIndex)
+        if (percent == 0)
+        {
+            position = nextIndex;
+        }
+        else if (index < nextIndex)
         {
             position = ((nextIndex - index) * percent) + index;
         }

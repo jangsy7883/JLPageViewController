@@ -35,6 +35,7 @@
 
 @property (nonatomic, assign) NSUInteger currentIndex;
 @property (nonatomic, readonly) UIViewController* currentViewController;
+@property (nonatomic, readonly) NSArray<UIViewController*>* viewControllers;
 
 @property (nonatomic, weak) id<JLPageViewControllerDataSource> dataSource;
 @property (nonatomic, weak) id<JLPageViewControllerDelegate> delegate;

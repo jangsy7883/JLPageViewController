@@ -436,6 +436,11 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 #pragma mark - GETTERS
 
+- (NSArray<UIViewController*>*)viewControllers
+{
+    return self.pageViewController.childViewControllers;
+}
+
 - (UIViewController*)currentViewController
 {
     for (UIViewController*viewController in self.pageViewController.childViewControllers)

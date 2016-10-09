@@ -259,6 +259,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 {
     _transitionInProgress = YES;
     
+    
     UIViewController *viewController = pendingViewControllers.firstObject;
     
     _nextIndex = viewController.jl_pageIndex;
@@ -334,7 +335,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
         
         if (percent == 0)
         {
-            position = nextIndex;
+            position = _transitionInProgress ? index : nextIndex;
         }
         else if (index < nextIndex)
         {

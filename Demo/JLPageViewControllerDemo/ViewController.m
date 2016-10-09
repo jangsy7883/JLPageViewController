@@ -48,7 +48,7 @@
 
 - (void)pageViewController:(JLPageViewController*)viewController didScrollToCurrentPosition:(CGFloat)currentPosition
 {
-//    NSLog(@"_%f",currentPosition);
+    NSLog(@"_%f",currentPosition);
 }
 
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex

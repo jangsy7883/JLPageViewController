@@ -275,6 +275,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
         [self didFinishTransition];
     }
     
+    _nextIndex = _currentIndex;
     _transitionInProgress = NO;
 }
 

@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/cocoapods/l/JLPageViewController.svg?style=flat)](http://cocoadocs.org/docsets/JLPageViewController)
 [![Platform](https://img.shields.io/cocoapods/p/JLPageViewController.svg?style=flat)](http://cocoadocs.org/docsets/JLPageViewController)
 
-#Installation
+## Installation
 JLPageViewController is available on CocoaPods. Add to your Podfile:
 ```bash
 pod 'JLPageViewController'
@@ -12,7 +12,7 @@ and run
 ```bash
 pod install
 ```
-##Licence 
+## Licence 
 
 The MIT License (MIT)
 

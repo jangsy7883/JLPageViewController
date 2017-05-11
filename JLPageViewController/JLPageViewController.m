@@ -164,8 +164,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 #pragma mark - observer
 
 - (void)addObservers {
-    @try
-    {
+    @try {
         [self.scrollView addObserver:self
                           forKeyPath:NSStringFromSelector(@selector(contentOffset))
                              options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew
@@ -175,8 +174,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 }
 
 - (void)removeObservers {
-    @try
-    {
+    @try {
         [self.scrollView removeObserver:self
                              forKeyPath:NSStringFromSelector(@selector(contentOffset))
                                 context:nil];
@@ -186,8 +184,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([object isKindOfClass:[UIScrollView class]]
-        && [keyPath isEqualToString:NSStringFromSelector(@selector(contentOffset))])
-    {
+        && [keyPath isEqualToString:NSStringFromSelector(@selector(contentOffset))]) {
         CGPoint new = [change[NSKeyValueChangeNewKey] CGPointValue];
         CGPoint old = [change[NSKeyValueChangeOldKey] CGPointValue];
         
@@ -279,8 +276,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if ([self.delegate respondsToSelector:@selector(pageViewController:didScrollToCurrentPosition:)] )
-    {
+    if ([self.delegate respondsToSelector:@selector(pageViewController:didScrollToCurrentPosition:)] ) {
         NSUInteger nextIndex = _nextIndex;
         NSUInteger index = (_currentIndex == NSNotFound) ? 0 : _currentIndex;
         CGFloat offsetX = scrollView.contentOffset.x;
@@ -351,7 +347,9 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
                                                    animated:animated
                                                  completion:^(BOOL finished) {
                                                      if (finished) {
-                                                         [blocksafeSelf didFinishTransition];
+                                                         dispatch_async(dispatch_get_main_queue(), ^{
+                                                             [blocksafeSelf didFinishTransition];
+                                                         });                                                         
                                                      }
                                                  }];
                 /*

@@ -18,14 +18,12 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     _index = 0;
 }
 
-- (ContentViewController*)contentViewControllerForIndex:(NSInteger)index
-{
+- (ContentViewController*)contentViewControllerForIndex:(NSInteger)index {
     ContentViewController *contentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ContentViewController"];
     contentViewController.contentIndex = index;
 
@@ -34,42 +32,34 @@
 
 #pragma mark - JLPageViewControllerDataSource
 
-- (UIViewController*)pageViewController:(JLPageViewController *)pageViewController viewControllerForIndex:(NSInteger)index
-{
+- (UIViewController*)pageViewController:(JLPageViewController *)pageViewController viewControllerForIndex:(NSInteger)index {
     return [self contentViewControllerForIndex:index];
 }
 
-- (NSInteger)defaultPageIndexForPageViewController:(JLPageViewController *)pageViewController
-{
+- (NSInteger)defaultPageIndexForPageViewController:(JLPageViewController *)pageViewController {
     return 10;
 }
 
 #pragma mark - JLPageViewControllerDelegate
 
-- (void)pageViewController:(JLPageViewController*)viewController didScrollToCurrentPosition:(CGFloat)currentPosition
-{
-    NSLog(@"_%f",currentPosition);
+- (void)pageViewController:(JLPageViewController*)viewController didScrollToCurrentPosition:(CGFloat)currentPosition {
+//    NSLog(@"_%f",currentPosition);
 }
 
-- (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex
-{
+- (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex {
     NSLog(@"%lu -> %ld(%zd)",(unsigned long)fromIndex,(long)index,[pageViewController indexPathForPageContainingViewController:pageViewController.currentViewController]);
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.destinationViewController isKindOfClass:[JLPageViewController class]]
-        && self.pageViewController == nil)
-    {
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.destinationViewController isKindOfClass:[JLPageViewController class]] && self.pageViewController == nil) {
         self.pageViewController = segue.destinationViewController;
         self.pageViewController.delegate = self;
         self.pageViewController.dataSource = self;
     }
 }
 
-- (IBAction)preseedButton:(id)sender
-{
-    _index = !_index;
+- (IBAction)preseedButton:(id)sender {
+    _index--;
     
     [self.pageViewController setCurrentIndex:_index animated:NO];
 }

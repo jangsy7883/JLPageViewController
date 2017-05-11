@@ -13,21 +13,35 @@
 @interface ViewController ()<JLPageViewControllerDataSource,JLPageViewControllerDelegate>
 
 @property (nonatomic, weak) JLPageViewController * pageViewController;
-@property (nonatomic, assign) NSInteger index;
+
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    _index = 0;
+    [super viewDidLoad];    
+    self.title = @"JLPageViewController";
 }
+
+#pragma mark - ContentView
 
 - (ContentViewController*)contentViewControllerForIndex:(NSInteger)index {
     ContentViewController *contentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ContentViewController"];
     contentViewController.contentIndex = index;
 
     return contentViewController;
+}
+
+#pragma mark - EVENT
+
+- (IBAction)preseedPrevButton:(id)sender {
+    NSInteger index = self.pageViewController.currentIndex - 1;
+    [self.pageViewController setCurrentIndex:index animated:YES];
+}
+
+- (IBAction)preseedNextButton:(id)sender {
+    NSInteger index = self.pageViewController.currentIndex + 1;
+    [self.pageViewController setCurrentIndex:index animated:YES];
 }
 
 #pragma mark - JLPageViewControllerDataSource
@@ -56,12 +70,6 @@
         self.pageViewController.delegate = self;
         self.pageViewController.dataSource = self;
     }
-}
-
-- (IBAction)preseedButton:(id)sender {
-    _index--;
-    
-    [self.pageViewController setCurrentIndex:_index animated:NO];
 }
 
 @end

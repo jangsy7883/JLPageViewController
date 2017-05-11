@@ -37,6 +37,8 @@
 @property (nonatomic, readonly) UIViewController* currentViewController;
 @property (nonatomic, readonly) NSArray<UIViewController*>* viewControllers;
 
+@property (nonatomic, readonly) BOOL scrolling;
+
 @property (nonatomic, weak) id<JLPageViewControllerDataSource> dataSource;
 @property (nonatomic, weak) id<JLPageViewControllerDelegate> delegate;
 

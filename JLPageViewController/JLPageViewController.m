@@ -334,49 +334,38 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
             _currentIndex = currentIndex;
         }
         else {
+            
             UIViewController *viewController = [self viewControllerForIndex:currentIndex];
             
             if (viewController) {// && [self.pageViewController.viewControllers.firstObject isEqual:viewController] == NO)
+                _transitionInProgress = YES;
                 _nextIndex = currentIndex;
                 
                 __weak JLPageViewController *blocksafeSelf = self;
                 UIPageViewControllerNavigationDirection direction = currentIndex > _currentIndex ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
                 
+                self.pageViewController.view.userInteractionEnabled = NO;
                 [self.pageViewController setViewControllers:@[viewController]
                                                   direction:direction
                                                    animated:animated
                                                  completion:^(BOOL finished) {
                                                      if (finished) {
                                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                                             blocksafeSelf.pageViewController.view.userInteractionEnabled = YES;
                                                              [blocksafeSelf didFinishTransition];
-                                                         });                                                         
+                                                         });
                                                      }
                                                  }];
-                /*
-                [self.pageViewController setViewControllers:@[viewController]
-                                                  direction:direction
-                                                   animated:animated
-                                                 completion:^(BOOL finished)
-                 {
-                     if (finished)
-                     {
-                         [blocksafeSelf didFinishTransition];
-                         
-                         dispatch_async(dispatch_get_main_queue(), ^{
-                             [blocksafeSelf.pageViewController setViewControllers:@[viewController]
-                                                                        direction:direction
-                                                                         animated:NO
-                                                                       completion:nil];
-                         });
-                     }
-                 }];
-                 */
             }
         }
     }
 }
 
 #pragma mark - GETTERS
+
+- (BOOL)scrolling {
+    return _transitionInProgress;
+}
 
 - (NSArray<UIViewController*>*)viewControllers {
     return self.pageViewController.childViewControllers;

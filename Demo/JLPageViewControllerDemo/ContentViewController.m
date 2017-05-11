@@ -10,10 +10,8 @@
 
 @implementation ContentViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
+- (void)viewDidLoad {
+    [super viewDidLoad];    
     self.contentLabel.text = [@(_contentIndex) stringValue];
 }
 

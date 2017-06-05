@@ -64,10 +64,6 @@
 //    NSLog(@"%lu -> %ld(%zd)",(unsigned long)fromIndex,(long)index,[pageViewController indexPathForPageContainingViewController:pageViewController.currentViewController]);
 }
 
-- (void)pageViewController:(JLPageViewController *)pageViewController willChangeToNextIndex:(NSInteger)index fromIndex:(NSInteger)fromIndex {
-    NSLog(@"%zd -> %zd",fromIndex,index);
-}
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.destinationViewController isKindOfClass:[JLPageViewController class]] && self.pageViewController == nil) {
         self.pageViewController = segue.destinationViewController;

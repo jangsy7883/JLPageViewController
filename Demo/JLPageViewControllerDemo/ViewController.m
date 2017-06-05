@@ -61,7 +61,11 @@
 }
 
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex {
-    NSLog(@"%lu -> %ld(%zd)",(unsigned long)fromIndex,(long)index,[pageViewController indexPathForPageContainingViewController:pageViewController.currentViewController]);
+//    NSLog(@"%lu -> %ld(%zd)",(unsigned long)fromIndex,(long)index,[pageViewController indexPathForPageContainingViewController:pageViewController.currentViewController]);
+}
+
+- (void)pageViewController:(JLPageViewController *)pageViewController willChangeToNextIndex:(NSInteger)index fromIndex:(NSInteger)fromIndex {
+    NSLog(@"%zd -> %zd",fromIndex,index);
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

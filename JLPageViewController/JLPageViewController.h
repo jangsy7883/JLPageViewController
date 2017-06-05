@@ -16,6 +16,7 @@
 
 - (void)pageViewController:(JLPageViewController *)pageViewController didScrollToCurrentPosition:(CGFloat)currentPosition;
 - (void)pageViewController:(JLPageViewController *)pageViewController didChangeToCurrentIndex:(NSInteger)index fromIndex:(NSUInteger)fromIndex;
+- (void)pageViewController:(JLPageViewController *)pageViewController willChangeToNextIndex:(NSInteger)index fromIndex:(NSInteger)fromIndex;
 
 @end
 

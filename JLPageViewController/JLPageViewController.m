@@ -225,6 +225,10 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     
     UIViewController *viewController = pendingViewControllers.firstObject;
     _nextIndex = viewController.jl_pageIndex;
+    
+    if ([self.delegate respondsToSelector:@selector(pageViewController:willChangeToNextIndex:fromIndex:)]) {
+        [self.delegate pageViewController:self willChangeToNextIndex:_nextIndex fromIndex:_currentIndex];
+    }
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController
@@ -340,6 +344,10 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
             if (viewController) {// && [self.pageViewController.viewControllers.firstObject isEqual:viewController] == NO)
                 _transitionInProgress = YES;
                 _nextIndex = currentIndex;
+                
+                if ([self.delegate respondsToSelector:@selector(pageViewController:willChangeToNextIndex:fromIndex:)]) {
+                    [self.delegate pageViewController:self willChangeToNextIndex:_nextIndex fromIndex:_currentIndex];
+                }
                 
                 __weak JLPageViewController *blocksafeSelf = self;
                 UIPageViewControllerNavigationDirection direction = currentIndex > _currentIndex ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;

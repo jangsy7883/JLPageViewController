@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "JLPageViewController"
-  s.version      = "1.15"
+  s.version      = "1.16"
   s.summary      = "JLPageViewController"
   s.homepage     = "https://github.com/jangsy7883/JLPageViewController"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }

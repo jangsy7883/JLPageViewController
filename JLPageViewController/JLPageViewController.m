@@ -45,7 +45,7 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
                  direction:(UIPageViewControllerNavigationDirection)direction
                   animated:(BOOL)animated
                 completion:(void (^)(BOOL))completion {
-    if (animated) {
+    if (animated && viewControllers.count > 0) {
         [super setViewControllers:viewControllers direction:direction animated:YES completion:^(BOOL finished) {
             if (finished) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -224,24 +224,51 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     _transitionInProgress = YES;
     
     UIViewController *viewController = pendingViewControllers.firstObject;
-    _nextIndex = viewController.jl_pageIndex;
+    NSUInteger nextIndex = viewController.jl_pageIndex;
+    
+    if (_currentIndex != nextIndex) {
+        _nextIndex = nextIndex;
+    }
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController
         didFinishAnimating:(BOOL)finished
    previousViewControllers:(NSArray<UIViewController *> *)previousViewControllers
        transitionCompleted:(BOOL)completed {
+    
+    UIViewController *viewController = previousViewControllers.firstObject;
+    if (_currentIndex != viewController.jl_pageIndex) {
+        return;
+    }
+    
     if (completed) {
         [self didFinishTransition];
     }
     
-    _nextIndex = _currentIndex;
-    _transitionInProgress = NO;
+    CGFloat width = self.scrollView.frame.size.width;
+    CGFloat percent = fabs(self.scrollView.contentOffset.x - width)/width;
+    if ((percent - (int)percent) == 0) {
+        _nextIndex = _currentIndex;
+        _transitionInProgress = NO;
+    }
+    /*
+     CGFloat offsetX = self.scrollView.contentOffset.x;
+     CGFloat width = self.scrollView.frame.size.width;
+     CGFloat percent = fabs(offsetX - width)/width;
+     
+     if ((percent - (int)percent) == 0) {
+     NSLog(@"A");
+     [self didFinishTransition];
+     
+     _nextIndex = _currentIndex;
+     _transitionInProgress = NO;
+     }
+     */
 }
 
 - (void)didFinishTransition {
     NSUInteger fromIndex = _currentIndex;
-
+    
     _currentIndex = [self indexPathForPageContainingViewController:self.pageViewController.viewControllers.firstObject];
     
     for (UIViewController *viewController in self.pageViewController.childViewControllers) {
@@ -254,9 +281,11 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
     
     if (_currentIndex != NSNotFound
         && [self.delegate respondsToSelector:@selector(pageViewController:didChangeToCurrentIndex:fromIndex:)]) {
-        [self.delegate pageViewController:self didChangeToCurrentIndex:self.currentIndex fromIndex:fromIndex];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate pageViewController:self didChangeToCurrentIndex:self.currentIndex fromIndex:fromIndex];
+        });
     }
-
+    
     _transitionInProgress = NO;
 }
 
@@ -300,7 +329,6 @@ static void * PageIndexPropertyKey = &PageIndexPropertyKey;
         {
             position = index;
         }
-        
         [self.delegate pageViewController:self didScrollToCurrentPosition:position];
     }
 }
